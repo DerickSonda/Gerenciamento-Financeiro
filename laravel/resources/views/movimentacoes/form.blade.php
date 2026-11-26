@@ -56,7 +56,7 @@
                 </label>
                 <label>
                     <span>Data</span>
-                    <input type="date" name="data" value="{{ old('data', $movimentacao->data?->format('Y-m-d')) }}" required
+                    <input type="text" name="data" value="{{ old('data', $movimentacao->data?->format('d/m/Y')) }}" class="campo-data" placeholder="dd/mm/aaaa" maxlength="10" inputmode="numeric" required
                         @error('data') aria-invalid="true" @enderror>
                     @error('data') <em class="erro">{{ $message }}</em> @enderror
                 </label>
@@ -75,3 +75,20 @@
         @endif
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        // coloca as barras sozinho: 26122026 vira 26/12/2026
+        document.querySelectorAll('.campo-data').forEach((campo) => {
+            campo.addEventListener('input', () => {
+                let numeros = campo.value.replace(/\D/g, '').slice(0, 8);
+                if (numeros.length > 4) {
+                    numeros = numeros.slice(0, 2) + '/' + numeros.slice(2, 4) + '/' + numeros.slice(4);
+                } else if (numeros.length > 2) {
+                    numeros = numeros.slice(0, 2) + '/' + numeros.slice(2);
+                }
+                campo.value = numeros;
+            });
+        });
+    </script>
+@endpush
