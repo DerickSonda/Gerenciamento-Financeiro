@@ -4,7 +4,7 @@
     $menu = [
         ['rota' => 'visao-geral', 'nome' => 'Visão geral', 'curto' => 'Início', 'icone' => 'inicio'],
         ['rota' => 'movimentacoes', 'nome' => 'Movimentações', 'curto' => 'Movimentos', 'icone' => 'movimentos'],
-        ['rota' => null, 'nome' => 'Planejamento', 'curto' => 'Planejar', 'icone' => 'planejar'],
+        ['rota' => 'planejamento', 'nome' => 'Planejamento', 'curto' => 'Planejar', 'icone' => 'planejar'],
         ['rota' => 'perfil', 'nome' => 'Meu perfil', 'curto' => 'Perfil', 'icone' => 'perfil'],
     ];
 @endphp
