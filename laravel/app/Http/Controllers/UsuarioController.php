@@ -31,7 +31,7 @@ class UsuarioController extends Controller
 
         if(Auth::attempt($credenciais)){
             $request->session()->regenerate();
-            return redirect()->route('filme.index');
+            return redirect()->intended(route('perfil'));
         }
 
         return back()->withErrors([
