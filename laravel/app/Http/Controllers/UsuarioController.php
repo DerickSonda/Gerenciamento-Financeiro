@@ -43,16 +43,27 @@ class UsuarioController extends Controller
         $dados = $request->validate([
             'nome' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:usuarios',
-            'senha' => 'required|string|min:6',
+            'senha' => 'required|string|min:8',
+            'termos' => 'accepted',
+        ], [
+            'nome.required' => 'Informe seu nome.',
+            'nome.max' => 'O nome pode ter no máximo 255 caracteres.',
+            'email.required' => 'Informe seu e-mail.',
+            'email.email' => 'Informe um e-mail válido.',
+            'email.max' => 'O e-mail pode ter no máximo 255 caracteres.',
+            'email.unique' => 'Já existe uma conta com este e-mail.',
+            'senha.required' => 'Crie uma senha.',
+            'senha.min' => 'A senha precisa ter pelo menos 8 caracteres.',
+            'termos.accepted' => 'Para criar a conta, aceite os Termos de Uso e a Política de Privacidade.',
         ]);
 
-        $usuario = Usuario::create([
+        Usuario::create([
             'nome' => $dados['nome'],
             'email' => $dados['email'],
             'senha' => Hash::make($dados['senha']),
         ]);
 
-        Auth::login($usuario);
+        return redirect()->route('login')->with('status', 'Conta criada! Agora é só entrar com seu e-mail e senha.');
     }
     public function logout(Request $request)
     {
