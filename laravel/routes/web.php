@@ -32,3 +32,10 @@ Route::fallback(function () {
         return redirect()->route('login');
     }
 });
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/dashboard', [PrincipalController::class, 'index'])
+        ->name('principal');
+
+});
