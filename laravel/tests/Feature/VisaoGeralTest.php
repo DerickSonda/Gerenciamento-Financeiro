@@ -67,6 +67,14 @@ class VisaoGeralTest extends TestCase
             ->assertRedirect(route('visao-geral'));
     }
 
+    public function test_logado_que_abre_login_ou_cadastro_vai_para_a_visao_geral(): void
+    {
+        $usuario = $this->usuario();
+
+        $this->actingAs($usuario)->get('/login')->assertRedirect('/visao-geral');
+        $this->actingAs($usuario)->get('/register')->assertRedirect('/visao-geral');
+    }
+
     public function test_menu_leva_para_a_visao_geral(): void
     {
         $this->actingAs($this->usuario())
