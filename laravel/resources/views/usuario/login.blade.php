@@ -7,22 +7,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href=" @vite('resources/css/login.css')">
+    @vite('resources/css/login.css')
 </head>
 <body>
 <main class="login">
-    {@if ($errors->any())}
-        <div class="alert alert-danger">
-            <ul>
-                {@foreach ($errors->all() as $error)}
-                    <li>{{ $error }}</li>
-                {@endforeach}
-            </ul>
-        </div>
-    {
-
-    @endif}
-
         <section class="brand">
         <span class="brand__ring brand__ring--top" aria-hidden="true"></span>
         <span class="brand__ring brand__ring--bottom" aria-hidden="true"></span>
@@ -59,13 +47,27 @@
             <h2 class="form-box__title">Entre na sua conta</h2>
             <p class="form-box__subtitle">Continue construindo uma vida financeira mais leve.</p>
 
+            @if (session('status'))
+                <div class="alert alert--success" role="status">{{ session('status') }}</div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert--danger" role="alert">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form action="{{ route('usuario.login') }}" method="POST" class="form">
                 @csrf
                 <div class="field">
                     <label for="email" class="field__label">E-mail</label>
                     <div class="input">
                         <svg class="input__icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-                        <input type="email" id="email" name="email" placeholder="voce@email.com" autocomplete="email" required>
+                        <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="voce@email.com" autocomplete="email" required>
                     </div>
                 </div>
 
@@ -73,7 +75,7 @@
                     <label for="password" class="field__label">Senha</label>
                     <div class="input">
                         <svg class="input__icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
-                        <input type="password" id="password" name="password" placeholder="Sua senha" autocomplete="current-password" required>
+                        <input type="password" id="password" name="senha" placeholder="Sua senha" autocomplete="current-password" required>
                         <button type="button" class="input__toggle" id="togglePassword" aria-label="Mostrar senha">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
                         </button>
@@ -101,7 +103,7 @@
                 </a>
             </form>
 
-            <p class="signup">Ainda não tem uma conta? <a href="#" class="link">Criar conta</a></p>
+            <p class="signup">Ainda não tem uma conta? <a href="{{ route('register') }}" class="link">Criar conta</a></p>
 
             <p class="secure">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
