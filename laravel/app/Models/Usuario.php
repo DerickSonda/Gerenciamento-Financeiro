@@ -29,6 +29,11 @@ class Usuario extends Authenticatable
         return $this->hasMany(Movimentacao::class);
     }
 
+    public function metas()
+    {
+        return $this->hasMany(Meta::class);
+    }
+
     public function primeiroNome(): string
     {
         return explode(' ', trim($this->nome))[0];
