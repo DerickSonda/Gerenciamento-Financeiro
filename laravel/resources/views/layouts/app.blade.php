@@ -2,7 +2,7 @@
     $usuario = auth()->user();
     $hoje = \Illuminate\Support\Str::ucfirst(now('America/Sao_Paulo')->locale('pt_BR')->translatedFormat('l, j \d\e F'));
     $menu = [
-        ['rota' => null, 'nome' => 'Visão geral', 'curto' => 'Início', 'icone' => 'inicio'],
+        ['rota' => 'visao-geral', 'nome' => 'Visão geral', 'curto' => 'Início', 'icone' => 'inicio'],
         ['rota' => null, 'nome' => 'Movimentações', 'curto' => 'Movimentos', 'icone' => 'movimentos'],
         ['rota' => null, 'nome' => 'Planejamento', 'curto' => 'Planejar', 'icone' => 'planejar'],
         ['rota' => 'perfil', 'nome' => 'Meu perfil', 'curto' => 'Perfil', 'icone' => 'perfil'],
