@@ -59,7 +59,7 @@
                 </label>
                 <label>
                     <span>Previsão</span>
-                    <input type="date" name="prazo" value="{{ old('prazo', $meta->prazo?->format('Y-m-d')) }}"
+                    <input type="text" name="prazo" value="{{ old('prazo', $meta->prazo?->format('d/m/Y')) }}" class="campo-data" placeholder="dd/mm/aaaa" maxlength="10" inputmode="numeric"
                         @error('prazo') aria-invalid="true" @enderror>
                     @error('prazo') <em class="erro">{{ $message }}</em> @enderror
                 </label>
@@ -78,3 +78,20 @@
         @endif
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        // coloca as barras sozinho: 26122026 vira 26/12/2026
+        document.querySelectorAll('.campo-data').forEach((campo) => {
+            campo.addEventListener('input', () => {
+                let numeros = campo.value.replace(/\D/g, '').slice(0, 8);
+                if (numeros.length > 4) {
+                    numeros = numeros.slice(0, 2) + '/' + numeros.slice(2, 4) + '/' + numeros.slice(4);
+                } else if (numeros.length > 2) {
+                    numeros = numeros.slice(0, 2) + '/' + numeros.slice(2);
+                }
+                campo.value = numeros;
+            });
+        });
+    </script>
+@endpush

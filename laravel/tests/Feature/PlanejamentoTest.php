@@ -47,7 +47,7 @@ class PlanejamentoTest extends TestCase
             'prioridade' => 'sonho',
             'valor_alvo' => '9500',
             'valor_guardado' => '4250',
-            'prazo' => '2028-05-01',
+            'prazo' => '01/05/2028',
         ], $mudar);
     }
 
@@ -159,6 +159,36 @@ class PlanejamentoTest extends TestCase
         $this->assertSame(0, Meta::count());
     }
 
+    public function test_previsao_no_formato_dia_mes_ano(): void
+    {
+        $this->actingAs($this->usuario())
+            ->post('/planejamento', $this->dados(['prazo' => '26/12/2030']))
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame('2030-12-26', Meta::first()->prazo->format('Y-m-d'));
+    }
+
+    public function test_previsao_invalida_da_erro(): void
+    {
+        $usuario = $this->usuario();
+
+        foreach (['2030-12-26', '31/02/2030', '26/12/10500'] as $prazo) {
+            $this->actingAs($usuario)
+                ->post('/planejamento', $this->dados(['prazo' => $prazo]))
+                ->assertSessionHasErrors(['prazo' => 'Informe uma data válida no formato dd/mm/aaaa.']);
+        }
+
+        $this->actingAs($usuario)
+            ->post('/planejamento', $this->dados(['prazo' => now()->subDay()->format('d/m/Y')]))
+            ->assertSessionHasErrors(['prazo' => 'A previsão não pode ser uma data que já passou.']);
+
+        $this->actingAs($usuario)
+            ->post('/planejamento', $this->dados(['prazo' => '01/01/2101']))
+            ->assertSessionHasErrors(['prazo' => 'A previsão precisa ser até 2100.']);
+
+        $this->assertSame(0, Meta::count());
+    }
+
     public function test_atualiza_o_valor_guardado(): void
     {
         $usuario = $this->usuario();
@@ -168,6 +198,7 @@ class PlanejamentoTest extends TestCase
             ->get('/planejamento/' . $meta->id . '/editar')
             ->assertOk()
             ->assertSee('Editar meta')
+            ->assertSee('value="01/09/2027"', false)
             ->assertSee('Reserva de emergência');
 
         $this->actingAs($usuario)

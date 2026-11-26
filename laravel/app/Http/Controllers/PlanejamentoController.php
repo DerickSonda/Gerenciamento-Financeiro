@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Meta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class PlanejamentoController extends Controller
@@ -82,7 +83,7 @@ class PlanejamentoController extends Controller
             'prioridade' => 'required|in:alta,media,sonho',
             'valor_alvo' => 'required|numeric|min:1|max:99999999',
             'valor_guardado' => 'nullable|numeric|min:0|max:99999999',
-            'prazo' => 'nullable|date',
+            'prazo' => 'nullable|date_format:d/m/Y|after_or_equal:today|before_or_equal:31/12/2100',
         ], [
             'nome.required' => 'Dê um nome para a meta.',
             'nome.max' => 'O nome pode ter no máximo 255 caracteres.',
@@ -96,10 +97,17 @@ class PlanejamentoController extends Controller
             'valor_guardado.numeric' => 'Informe um valor válido.',
             'valor_guardado.min' => 'O valor guardado não pode ser negativo.',
             'valor_guardado.max' => 'O valor é alto demais.',
-            'prazo.date' => 'Informe uma data válida.',
+            'prazo.date_format' => 'Informe uma data válida no formato dd/mm/aaaa.',
+            'prazo.after_or_equal' => 'A previsão não pode ser uma data que já passou.',
+            'prazo.before_or_equal' => 'A previsão precisa ser até 2100.',
         ]);
 
         $dados['valor_guardado'] = $dados['valor_guardado'] ?? 0;
+
+        // o campo vem como dd/mm/aaaa e o banco guarda aaaa-mm-dd
+        if (! empty($dados['prazo'])) {
+            $dados['prazo'] = Carbon::createFromFormat('d/m/Y', $dados['prazo'])->format('Y-m-d');
+        }
 
         return $dados;
     }
