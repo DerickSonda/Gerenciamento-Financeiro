@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\MovimentacaoController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\PrincipalController;
 use App\Http\Controllers\UsuarioController;
@@ -14,6 +15,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [UsuarioController::class, 'logout'])->name('usuario.logout');
 
     Route::get('/visao-geral', [VisaoGeralController::class, 'index'])->name('visao-geral');
+
+    Route::get('/movimentacoes', [MovimentacaoController::class, 'index'])->name('movimentacoes');
+    Route::get('/movimentacoes/criar', [MovimentacaoController::class, 'criar'])->name('movimentacoes.criar');
+    Route::post('/movimentacoes', [MovimentacaoController::class, 'salvar'])->name('movimentacoes.salvar');
+    Route::get('/movimentacoes/{movimentacao}/editar', [MovimentacaoController::class, 'editar'])->name('movimentacoes.editar');
+    Route::put('/movimentacoes/{movimentacao}', [MovimentacaoController::class, 'atualizar'])->name('movimentacoes.atualizar');
+    Route::delete('/movimentacoes/{movimentacao}', [MovimentacaoController::class, 'excluir'])->name('movimentacoes.excluir');
 
     Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil');
     Route::put('/perfil', [PerfilController::class, 'atualizar'])->name('perfil.atualizar');
