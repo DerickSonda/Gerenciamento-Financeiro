@@ -45,7 +45,7 @@ class MovimentacoesTest extends TestCase
             'tipo' => 'entrada',
             'categoria' => 'Salário',
             'valor' => '4850.00',
-            'data' => now()->format('Y-m-d'),
+            'data' => now()->format('d/m/Y'),
         ], $mudar);
     }
 
@@ -144,6 +144,43 @@ class MovimentacoesTest extends TestCase
             ->assertSessionHasErrors(['valor' => 'Informe um valor válido.']);
     }
 
+    public function test_data_no_formato_dia_mes_ano(): void
+    {
+        $this->actingAs($this->usuario())
+            ->post('/movimentacoes', $this->dados(['data' => '26/12/2026']))
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame('2026-12-26', Movimentacao::first()->data->format('Y-m-d'));
+    }
+
+    public function test_data_invalida_da_erro(): void
+    {
+        $usuario = $this->usuario();
+
+        foreach (['2026-12-26', '31/02/2026', '26/12/10500', 'abc'] as $data) {
+            $this->actingAs($usuario)
+                ->post('/movimentacoes', $this->dados(['data' => $data]))
+                ->assertSessionHasErrors(['data' => 'Informe uma data válida no formato dd/mm/aaaa.']);
+        }
+
+        $this->assertSame(0, Movimentacao::count());
+    }
+
+    public function test_ano_precisa_estar_entre_2000_e_2100(): void
+    {
+        $usuario = $this->usuario();
+
+        $this->actingAs($usuario)
+            ->post('/movimentacoes', $this->dados(['data' => '31/12/1999']))
+            ->assertSessionHasErrors(['data' => 'A data precisa ser de 2000 em diante.']);
+
+        $this->actingAs($usuario)
+            ->post('/movimentacoes', $this->dados(['data' => '01/01/2101']))
+            ->assertSessionHasErrors(['data' => 'A data precisa ser até 2100.']);
+
+        $this->assertSame(0, Movimentacao::count());
+    }
+
     public function test_tipo_e_categoria_precisam_ser_da_lista(): void
     {
         $this->actingAs($this->usuario())
@@ -162,7 +199,8 @@ class MovimentacoesTest extends TestCase
             ->get('/movimentacoes/' . $movimentacao->id . '/editar')
             ->assertOk()
             ->assertSee('Editar movimentação')
-            ->assertSee('Mercado do mês');
+            ->assertSee('Mercado do mês')
+            ->assertSee('value="' . now()->format('d/m/Y') . '"', false);
 
         $this->actingAs($usuario)
             ->put('/movimentacoes/' . $movimentacao->id, $this->dados([

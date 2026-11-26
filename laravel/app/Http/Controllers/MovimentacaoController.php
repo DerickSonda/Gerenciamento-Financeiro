@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Movimentacao;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
@@ -103,12 +104,12 @@ class MovimentacaoController extends Controller
 
     private function validar(Request $request)
     {
-        return $request->validate([
+        $dados = $request->validate([
             'descricao' => 'required|string|max:255',
             'tipo' => 'required|in:entrada,saida',
             'categoria' => ['required', Rule::in($this->categorias)],
             'valor' => 'required|numeric|min:0.01|max:99999999',
-            'data' => 'required|date',
+            'data' => 'required|date_format:d/m/Y|after_or_equal:01/01/2000|before_or_equal:31/12/2100',
         ], [
             'descricao.required' => 'Informe uma descrição.',
             'descricao.max' => 'A descrição pode ter no máximo 255 caracteres.',
@@ -121,7 +122,14 @@ class MovimentacaoController extends Controller
             'valor.min' => 'O valor precisa ser maior que zero.',
             'valor.max' => 'O valor é alto demais.',
             'data.required' => 'Informe a data.',
-            'data.date' => 'Informe uma data válida.',
+            'data.date_format' => 'Informe uma data válida no formato dd/mm/aaaa.',
+            'data.after_or_equal' => 'A data precisa ser de 2000 em diante.',
+            'data.before_or_equal' => 'A data precisa ser até 2100.',
         ]);
+
+        // o campo vem como dd/mm/aaaa e o banco guarda aaaa-mm-dd
+        $dados['data'] = Carbon::createFromFormat('d/m/Y', $dados['data'])->format('Y-m-d');
+
+        return $dados;
     }
 }
